@@ -2,14 +2,16 @@ body {
     padding-top: 50px;
     color: #495057;
     background-color: seashell;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   }
 
   .container {
       display: flex;
       flex-direction: column;
       flex-wrap: wrap;
-      grid-column: 2;
+      border: 10px solid black;
       align-items: center;
+      justify-content: space-around;
   }
 
   p{
@@ -23,8 +25,10 @@ body {
   }
   
   .pictures {
-    grid-row: 3;
-    grid-column: 2;
+    display: flex;
+    border: 1px solid black;
+    align-items: center;
+    justify-content: space-around;
   }
 
   .nav {
@@ -41,6 +45,8 @@ body {
     grid-column: 2;
     opacity: .5;
     align-items: center;
+    justify-content: space-around;
+    border: 1px solid black;
   }
   
   .nav-link {
