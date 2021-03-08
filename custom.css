@@ -9,6 +9,7 @@ body {
       flex-direction: column;
       flex-wrap: wrap;
       grid-column: 2;
+      align-items: center;
   }
 
   p{
@@ -39,6 +40,7 @@ body {
     grid-row: 4;
     grid-column: 2;
     opacity: .5;
+    align-items: center;
   }
   
   .nav-link {
