@@ -54,14 +54,17 @@ class SettingScreen extends React.Component {
       })
   }
 
+  renderSettingsToggle() {
+    return this.state.names.map((data) => {
+      return <SettingToggle name={data} />;
+    });
+  }
+
   render() {
     return (
       <div class="container">
         <UserProfile />
-        <SettingToggle name={this.state.names[0]}/>
-        <SettingToggle name={this.state.names[1]}/>
-        <SettingToggle name={this.state.names[2]}/>
-        <SettingToggle name={this.state.names[3]}/>
+        {this.renderSettingsToggle()}
       </div>
     );
   }
