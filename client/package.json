@@ -34,7 +34,6 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {},
   "engines": {
     "node": "10.15.3"
   }
