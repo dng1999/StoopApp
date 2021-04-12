@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import Map from './HomeScreen';
-import HSControl from './HomeScreenControl';
+//import App from './App';
+//import Map from './HomeScreen';
+//import HSControl from './HomeScreenControl';
+import Settings from './Settings';
 import reportWebVitals from './reportWebVitals';
 
 function testFunction() {
@@ -12,9 +13,7 @@ function testFunction() {
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* <App /> */}
-    <Map />
-    <HSControl onClick={testFunction} />
+    <Settings />
   </React.StrictMode>,
   document.getElementById('root')
 );

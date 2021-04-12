@@ -38,9 +38,19 @@ class SettingToggle extends React.Component {
 class SettingScreen extends React.Component {
   constructor(props){
     super(props);
-    this.settings = {
-      names: ["Setting1", "Setting2", "Setting3", "Setting4"]
+    this.state = {
+      names: []
     };
+  }
+
+  componentDidMount(){
+    axios.get('https://stoopapp-sd.herokuapp.com/settings')
+      .then(res => {
+        this.setState({names: res.names});
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
   }
 
   render() {
