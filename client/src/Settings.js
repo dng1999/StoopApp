@@ -1,5 +1,6 @@
 import React from 'react';
 import './Settings.css';
+import axios from 'axios';
 
 class UserProfile extends React.Component {
   render() {
