@@ -46,11 +46,13 @@ class SettingScreen extends React.Component {
 
   componentDidMount(){
     axios.get('https://stoopapp-sd.herokuapp.com/settings')
-      .then(res => {
-        this.setState({names: res.names});
+      .then((response) => {
+        console.log("GET response");
+        console.log(response.data)
+        this.setState({names: response.data.names});
       })
       .catch(function (error) {
-        console.log(error);
+        console.error(error);
       })
   }
 
