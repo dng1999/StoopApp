@@ -58,10 +58,10 @@ class SettingScreen extends React.Component {
     return (
       <div class="container">
         <UserProfile />
-        <SettingToggle name={this.settings.names[0]}/>
-        <SettingToggle name={this.settings.names[1]}/>
-        <SettingToggle name={this.settings.names[2]}/>
-        <SettingToggle name={this.settings.names[3]}/>
+        <SettingToggle name={this.state.names[0]}/>
+        <SettingToggle name={this.state.names[1]}/>
+        <SettingToggle name={this.state.names[2]}/>
+        <SettingToggle name={this.state.names[3]}/>
       </div>
     );
   }
