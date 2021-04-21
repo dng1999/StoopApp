@@ -27,7 +27,7 @@ def get_settings():
         #       setting_vals[key] = '0'
         setting_vals = {'Listing Alerts' : '0'}
         return jsonify(values=setting_vals)
-    else if request.method == 'POST':
+    elif request.method == 'POST':
         #if key is in setting_names, update
         return jsonify(message="Got it!")
 
