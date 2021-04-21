@@ -49,7 +49,7 @@ class SettingScreen extends React.Component {
       .then((response) => {
         console.log("GET response");
         console.log(response.data);
-        this.setState({value: response.data.values});
+        this.setState({values: response.data.values});
       })
       .catch(function (error) {
         console.error(error);
