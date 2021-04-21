@@ -14,23 +14,23 @@ class UserProfile extends React.Component {
   }
 }
 
-function SettingRow(props) {
+/*function SettingRow(props) {
   return (
     <label>
       <div class="settingName">{props.name}</div>
       <div class="settingValue">{props.value}</div>
     </label>
   );
-}
+}*/
 
 class SettingToggle extends React.Component {
   render() {
     return (
       <div class="settingRow">
-        <SettingRow
-          name={this.props.name}
-          value={"Off"}
-        />
+        <label>
+          <div class="settingName">{this.props.name}</div>
+          <div class="settingValue">{this.props.value}</div>
+        </label>
       </div>
     );
   }
@@ -40,7 +40,7 @@ class SettingScreen extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      names: []
+      values: {}
     };
   }
 
@@ -48,8 +48,8 @@ class SettingScreen extends React.Component {
     axios.get('https://stoopapp-sd.herokuapp.com/settings')
       .then((response) => {
         console.log("GET response");
-        console.log(response.data)
-        this.setState({names: response.data.names});
+        console.log(response.data);
+        this.setState({value: response.data.values});
       })
       .catch(function (error) {
         console.error(error);
@@ -57,8 +57,8 @@ class SettingScreen extends React.Component {
   }
 
   renderSettingsToggle() {
-    return this.state.names.map((data) => {
-      return <SettingToggle name={data} />;
+    return Object.entries(this.state.values).map(([key, value]) => {
+      return <SettingToggle name={key} value={value}/>
     });
   }
 
