@@ -8,11 +8,10 @@ import os
 load_dotenv()
 
 app = Flask(__name__, static_folder='../client/build/', static_url_path='/')
-CORS(app)
-
-SESSION_TYPE = 'redis'
-app.config.from_object(__name__)
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_TYPE'] = 'redis'
 Session(app)
+CORS(app)
 
 firebaseConfig =  {
     "apiKey": os.environ['FB_APIKEY'],
@@ -49,6 +48,16 @@ def login():
         print(message)
         return False
 
+@app.route("/logout", methods=["POST"])
+def logout():
+    try:
+        session['user'] = None
+        return jsonify(response), 201
+    except Exception as e:
+        message = "User not logged in"
+        print(message)
+        return False
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -70,9 +79,9 @@ def get_settings():
         setting_vals = {}
         for key, value in user_prefs.each():
             if key in setting_names:
-               setting_vals[key] = value
-           else:
-               setting_vals[key] = '0'
+                setting_vals[key] = value
+            else:
+                setting_vals[key] = '0'
         return jsonify(values=setting_vals)
 
     #Update settings in database

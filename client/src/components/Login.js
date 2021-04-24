@@ -11,8 +11,19 @@ export default function Login({ setToken, logout }) {
   const history = useHistory();
 
   if (logout) {
-    setToken(null);
-    history.push("/login");
+    axios
+      .post("/logout")
+      .then(() => {
+        setToken(null);
+        history.push("/login");
+      })
+      .catch((error) =>
+        toast.error(
+          error.response
+            ? error.response.data
+            : "Some error has been occured. Please try again."
+        )
+      );
   }
 
   const onLoginPress = (event) => {
