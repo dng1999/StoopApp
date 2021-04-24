@@ -1,3 +1,3 @@
 export const Config = {
-    apiUrl: 'http://localhost:5000'
+    apiUrl: 'https://stoopapp-sd.herokuapp.com'
 }
