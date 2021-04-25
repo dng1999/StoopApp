@@ -1,5 +1,5 @@
 body{
-  background:linear-gradient(to left, rgb(49, 175, 233), white);
+  background:white;
   margin:0;
   padding:0;
   box-sizing:border-box;
@@ -31,7 +31,7 @@ body{
   font-family: "Open Sans", sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: center;    
+  align-items: center;
 }
 
 .button{

@@ -102,7 +102,7 @@ export default function Login({ setToken, logout }) {
           </div>
           <div className="notRegistered text-center">
             <span>Don't have an account? </span>
-            <button className="btn btn-danger btn-xs my-4" onclick={openRegisterPage}>Register</button>
+            <a href="/register">Register</a>
           </div>
         </div>
       </div>
