@@ -12,7 +12,7 @@ export default function Login({ setToken, logout }) {
 
   if (logout) {
     axios
-      .post("/logout")
+      .post("/api/logout")
       .then(() => {
         setToken(null);
         history.push("/login");
@@ -30,7 +30,7 @@ export default function Login({ setToken, logout }) {
     event.preventDefault();
 
     axios
-      .post("/login", { email, password })
+      .post("/axios/login", { email, password })
       .then((response) => {
         setToken(response.data);
         toast.success("Logged in successfully!");
@@ -59,7 +59,7 @@ export default function Login({ setToken, logout }) {
             <div className="input-group my-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
-                  <i class="fa fa-user"></i>
+                  <i className="fa fa-user"></i>
                 </span>
               </div>
               <input
@@ -74,7 +74,7 @@ export default function Login({ setToken, logout }) {
             <div className="input-group mb-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
-                  <i class="fa fa-lock"></i>
+                  <i className="fa fa-lock"></i>
                 </span>
               </div>
               <input

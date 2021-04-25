@@ -36,7 +36,7 @@ class SettingScreen extends React.Component {
   }
 
   componentDidMount(){
-    axios.get('https://stoopapp-sd.herokuapp.com/settings')
+    axios.get('https://stoopapp-sd.herokuapp.com/api/settings')
       .then((response) => {
         console.log("GET response");
         console.log(response.data);

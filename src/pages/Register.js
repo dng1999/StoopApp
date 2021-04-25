@@ -20,7 +20,7 @@ export default function Register({ setToken }) {
     }
 
     axios
-      .post("/register", {
+      .post("/api/register", {
         email,
         name,
         password,
@@ -53,7 +53,7 @@ export default function Register({ setToken }) {
             <div className="input-group my-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
-                  <i class="fa fa-user"></i>
+                  <i className="fa fa-user"></i>
                 </span>
               </div>
               <input
@@ -68,7 +68,7 @@ export default function Register({ setToken }) {
             <div className="input-group my-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
-                  <i class="fa fa-envelope"></i>
+                  <i className="fa fa-envelope"></i>
                 </span>
               </div>
               <input
@@ -83,7 +83,7 @@ export default function Register({ setToken }) {
             <div className="input-group mb-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
-                  <i class="fa fa-lock"></i>
+                  <i className="fa fa-lock"></i>
                 </span>
               </div>
               <input
@@ -98,7 +98,7 @@ export default function Register({ setToken }) {
             <div className="input-group mb-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
-                  <i class="fa fa-lock"></i>
+                  <i className="fa fa-lock"></i>
                 </span>
               </div>
               <input

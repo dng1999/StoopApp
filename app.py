@@ -33,7 +33,7 @@ def index():
     return app.send_static_file('index.html')
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/api/login", methods=["POST"])
 def login():
     data = request.get_json()
     email = data["email"]
@@ -48,7 +48,7 @@ def login():
         print(message)
         return False
 
-@app.route("/logout", methods=["POST"])
+@app.route("/api/logout", methods=["POST"])
 def logout():
     try:
         session['user'] = None
@@ -59,7 +59,7 @@ def logout():
         return False
 
 
-@app.route("/register", methods=["POST"])
+@app.route("/api/register", methods=["POST"])
 def register():
     data = request.get_json()
     email = data["email"]
@@ -68,7 +68,7 @@ def register():
     return jsonify(response), 201
 
 
-@app.route('/settings', methods=['GET', 'POST'])
+@app.route('/api/settings', methods=['GET', 'POST'])
 def get_settings():
     setting_names = ['Listing Alerts']
     #User id should be in session var
@@ -90,8 +90,12 @@ def get_settings():
         return jsonify(message="Got it!")
 
 @app.route('/<path:path>')
-def catch_all(path):
-    return 'You want path: %s' % path
+def static_file(path):
+    return app.send_static_file(path)
+
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file('index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=False, port=int(os.environ.get("PORT", 5000)))
