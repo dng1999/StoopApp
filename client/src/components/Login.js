@@ -45,6 +45,10 @@ export default function Login({ setToken, logout }) {
       );
   };
 
+  const openRegisterPage = () => {
+    history.push("/register")
+  }
+
   return (
     <div className="container">
       <div className="form-box">
@@ -98,7 +102,7 @@ export default function Login({ setToken, logout }) {
           </div>
           <div className="notRegistered text-center">
             <span>Don't have an account? </span>
-            <a href="/register">Register here</a>
+            <button className="btn btn-danger btn-xs my-4" onclick={openRegisterPage}>Register</button>
           </div>
         </div>
       </div>

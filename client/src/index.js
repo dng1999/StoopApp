@@ -8,7 +8,7 @@ import './index.css';
 import App from './App';
 //import Map from './HomeScreen';
 //import HSControl from './HomeScreenControl';
-//import Settings from './Settings';
+import Settings from './Settings';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 import { Config } from './config';

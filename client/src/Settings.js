@@ -14,15 +14,6 @@ class UserProfile extends React.Component {
   }
 }
 
-/*function SettingRow(props) {
-  return (
-    <label>
-      <div class="settingName">{props.name}</div>
-      <div class="settingValue">{props.value}</div>
-    </label>
-  );
-}*/
-
 class SettingToggle extends React.Component {
   render() {
     return (
