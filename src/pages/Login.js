@@ -30,7 +30,7 @@ export default function Login({ setToken, logout }) {
     event.preventDefault();
 
     axios
-      .post("/axios/login", { email, password })
+      .post("/api/login", { email, password })
       .then((response) => {
         setToken(response.data);
         toast.success("Logged in successfully!");

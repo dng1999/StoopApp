@@ -11,6 +11,7 @@ import 'jquery/dist/jquery.js';
 import 'bootstrap/dist/js/bootstrap.bundle.js';
 
 axios.defaults.baseURL = 'https://stoopapp-sd.herokuapp.com';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 ReactDOM.render(
   <App />,

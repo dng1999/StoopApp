@@ -44,9 +44,9 @@ def login():
         session['user'] = response
         return jsonify(response), 201
     except Exception as e:
-        message = "Please check your credentials"
+        message = "Please check your credentials."
         print(message)
-        return False
+        return jsonify(message), 401
 
 @app.route("/api/logout", methods=["POST"])
 def logout():

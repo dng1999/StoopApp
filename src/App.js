@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { BrowserRouter as Router, Switch, Link } from 'react-router-dom';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
+import { ToastContainer } from "react-toastify";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -43,6 +44,11 @@ function App() {
           <GuardedRoute path="/register" exact component={Register}/>
         </Switch>
       </GuardProvider>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={true}
+      />
     </Router>
   );
 }
