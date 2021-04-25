@@ -7,7 +7,7 @@ import os
 
 load_dotenv()
 
-app = Flask(__name__, static_folder='../client/build/', static_url_path='/')
+app = Flask(__name__, static_folder='build/', static_url_path='/')
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'redis'
 Session(app)
@@ -89,6 +89,9 @@ def get_settings():
         #if key is in setting_names, update
         return jsonify(message="Got it!")
 
+@app.route('/<path:path>')
+def catch_all(path):
+    return 'You want path: %s' % path
 
 if __name__ == '__main__':
-    app.run(port=(os.getenv('PORT') if os.getenv('PORT') else 8000), debug=False)
+    app.run(host='0.0.0.0', debug=False, port=int(os.environ.get("PORT", 5000)))

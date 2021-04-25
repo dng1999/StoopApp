@@ -5,8 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import axios from 'axios';
-import { BrowserRouter as Router, Switch, Link } from 'react-router-dom';
-import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'jquery/dist/jquery.js';

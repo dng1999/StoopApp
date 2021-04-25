@@ -45,10 +45,6 @@ export default function Login({ setToken, logout }) {
       );
   };
 
-  const openRegisterPage = () => {
-    history.push("/register")
-  }
-
   return (
     <div className="container">
       <div className="form-box">

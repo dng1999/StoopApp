@@ -15,7 +15,7 @@ const requireLogin = (to, from, next) => {
     if (token != null) {
       next();
     }
-    next.redirect('/Login');
+    next.redirect('/login');
   } else {
     next();
   }
@@ -33,14 +33,14 @@ function App() {
     <Router>
       <ul>
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/Login">Login</Link></li>
-        <li><Link to="/Register">Register</Link></li>
+        <li><Link to="/login">Login</Link></li>
+        <li><Link to="/register">Register</Link></li>
       </ul>
       <GuardProvider guards={[requireLogin]}>
         <Switch>
           <GuardedRoute path="/" exact component={Home} meta={{ auth: true }} />
-          <GuardedRoute path="/Login" exact component={Login}/>
-          <GuardedRoute path="/Register" exact component={Register}/>
+          <GuardedRoute path="/login" exact component={Login}/>
+          <GuardedRoute path="/register" exact component={Register}/>
         </Switch>
       </GuardProvider>
     </Router>
