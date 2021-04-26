@@ -6,6 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Map from './HomeScreen'
 //import Map from './HomeScreen';
 //import HSControl from './HomeScreenControl';
 //import Settings from './Settings';
@@ -13,11 +14,11 @@ import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 import { Config } from './config';
 axios.defaults.baseURL = Config.apiUrl;
-
-
+// document.documentElement.requestFullscreen();
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Map />
+    {/* <HSControl onClick={testFunction} /> */}
   </React.StrictMode>,
   document.getElementById('root')
 );
