@@ -52,11 +52,11 @@ def login():
 def logout():
     try:
         session['user'] = None
-        return jsonify(response), 201
+        return jsonify("Logged out"), 201
     except Exception as e:
         message = "User not logged in"
         print(message)
-        return False
+        return jsonify(message), 401
 
 
 @app.route("/api/register", methods=["POST"])
