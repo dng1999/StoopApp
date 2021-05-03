@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Switch, Link } from 'react-router-dom';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
 import { ToastContainer } from "react-toastify";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Map from './HomeScreen';
+import Login from "./Login";
+import Register from "./Register";
 
 import './App.css';
 
@@ -39,7 +39,7 @@ function App() {
       </ul>
       <GuardProvider guards={[requireLogin]}>
         <Switch>
-          <GuardedRoute path="/" exact component={Home} meta={{ auth: true }} />
+          <GuardedRoute path="/" exact component={Map} meta={{ auth: true }} />
           <GuardedRoute path="/login" exact component={Login}/>
           <GuardedRoute path="/register" exact component={Register}/>
         </Switch>

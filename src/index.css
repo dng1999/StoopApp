@@ -14,3 +14,11 @@ code {
 html, body, #root {
   height: 100%;
 }
+
+/* All buttons  */
+button {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+}
