@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
-import registerPhoto from "../welcome.svg";
+import registerPhoto from "./welcome.svg";
 
 export default function Register({ setToken }) {
   const [email, setEmail] = useState("");

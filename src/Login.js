@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
-import loginPhoto from "../login.svg";
+import loginPhoto from "./login.svg";
 import "font-awesome/css/font-awesome.min.css";
 
 export default function Login({ setToken, logout }) {

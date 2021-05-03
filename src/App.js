@@ -39,7 +39,7 @@ function App() {
       </ul>
       <GuardProvider guards={[requireLogin]}>
         <Switch>
-          <GuardedRoute path="/" exact component={Map} meta={{ auth: true }} />
+          <GuardedRoute path="/" exact component={Map} />
           <GuardedRoute path="/login" exact component={Login}/>
           <GuardedRoute path="/register" exact component={Register}/>
         </Switch>
