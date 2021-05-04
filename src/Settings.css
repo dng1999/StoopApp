@@ -1,14 +1,16 @@
-.container {
+.setting-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   border: 1px solid black;
   align-items: center;
+  align-content: flex-start;
   justify-content: space-around;
+  color: white;
 }
 
 .settingRow{
-  width: 90%;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   padding: 5px;
@@ -16,7 +18,7 @@
 }
 
 .settingRow:hover{
-  background-color: #edebfa;
+  background-color: #262626;
 }
 
 .settingRow label {
@@ -26,9 +28,9 @@
 }
 
 .userProfile {
-  border-bottom: 1px black solid;
-  width: 90%;
+  border-bottom: 1px white solid;
+  width: 100%;
   display: flex;
-  padding: 10px;
-  margin: 10px;
+  padding: 0px 0px 10px 0px;
+  margin: 5px;
 }

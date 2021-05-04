@@ -6,6 +6,8 @@ import { ToastContainer } from "react-toastify";
 import Map from './HomeScreen';
 import Login from "./Login";
 import Register from "./Register";
+import SettingScreen from "./Settings";
+import NavBar from "./NavigationBar";
 
 import './App.css';
 
@@ -32,16 +34,13 @@ function App() {
 
   return (
     <Router>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/login">Login</Link></li>
-        <li><Link to="/register">Register</Link></li>
-      </ul>
       <GuardProvider guards={[requireLogin]}>
         <Switch>
-          <GuardedRoute path="/" exact component={Map} />
           <GuardedRoute path="/login" exact component={Login}/>
           <GuardedRoute path="/register" exact component={Register}/>
+          <GuardedRoute path="/" exact component={Map} />
+          <GuardedRoute path="/settings" exact component={SettingScreen}/>
+          /*<GuardedRoute path="/logout" exact component={Login}/>*/
         </Switch>
       </GuardProvider>
       <ToastContainer
@@ -49,6 +48,8 @@ function App() {
         autoClose={3000}
         hideProgressBar={true}
       />
+      {/* Navigation bar */}
+      <NavBar />
     </Router>
   );
 }

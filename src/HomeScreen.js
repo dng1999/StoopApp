@@ -19,8 +19,9 @@ const LIBRARIES = ["places"];
 
 // Container div for Google Map
 const MAP_CONTAINER_STYLE = {
-    width: '100vw',
-    height: '92vh'
+    width: '100%',
+    height: '100%',
+    position: 'absolute'
 }
 
 // Map starting lat/long
@@ -108,9 +109,6 @@ export default function Map() {
             borderRadius="50%"
             padding="3px 3px 3px 3px"
         />
-
-        {/* Navigation bar */}
-        <NavBar></NavBar>
 
         {/* Main map */}
         <GoogleMap

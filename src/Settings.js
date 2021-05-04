@@ -56,8 +56,13 @@ class SettingScreen extends React.Component {
   render() {
     return (
       <div class="container">
-        <UserProfile />
-        {this.renderSettingsToggle()}
+        <div class="form-box">
+          <div class="setting-container">
+            <UserProfile />
+            <SettingToggle name="test" value="test"/>
+            {this.renderSettingsToggle()}
+          </div>
+        </div>
       </div>
     );
   }
