@@ -44,7 +44,8 @@ def login():
     try:
         response = auth.sign_in_with_email_and_password(email, password)
         response = auth.refresh(response['refreshToken'])
-        session['user'] = response
+        session['token'] = response['idToken']
+        session['uid'] = response['userId']
         return jsonify(response), 201
     except Exception as e:
         message = "Please check your credentials."
@@ -54,7 +55,8 @@ def login():
 @app.route("/api/logout", methods=["POST"])
 def logout():
     try:
-        session.pop('user', None)
+        session.pop('uid', None)
+        session.pop('token', None)
         return jsonify("Logged out"), 201
     except Exception as e:
         message = "User not logged in"
@@ -75,7 +77,9 @@ def register():
 def get_settings():
     setting_names = ['Listing Alerts']
     #User id should be in session var
-    user_prefs = db.child('users').child(session['user']['uid']).child('settings')
+    user_prefs = db.child('users').child(session.get('uid')).child('settings')
+    if not user.shallow().get(session.get('token')).val():
+        user_prefs.set({'Listing Alerts': 'Off'}, session['token'])
 
     #Get settings from database and send to frontend if key in setting_names
     if request.method == 'GET':
