@@ -36,11 +36,15 @@ function App() {
     <Router>
       <GuardProvider guards={[requireLogin]}>
         <Switch>
-          <GuardedRoute path="/login" exact component={Login}/>
-          <GuardedRoute path="/register" exact component={Register}/>
+          <GuardedRoute path="/login">
+            <Login setToken={setToken} logout={false}/>
+          </GuardedRoute> 
+          <GuardedRoute path="/register">
+            <Register setToken={setToken}/>
+          </GuardedRoute>
           <GuardedRoute path="/" exact component={Map} />
           <GuardedRoute path="/settings" exact component={SettingScreen}/>
-          /*<GuardedRoute path="/logout" exact component={Login}/>*/
+          <GuardedRoute path="/logout" exact component={Login}/>
         </Switch>
       </GuardProvider>
       <ToastContainer
