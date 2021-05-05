@@ -44,7 +44,7 @@ function App() {
           </GuardedRoute>
           <GuardedRoute path="/" exact component={Map} meta={{ auth: true }} />
           <GuardedRoute path="/settings" exact component={SettingScreen} meta={{ auth: true }} />
-          <GuardedRoute path="/logout" meta={{ auth: true }} />
+          <GuardedRoute path="/logout" meta={{ auth: true }}>
             <Login setToken={setToken} logout={true}/>
           </GuardedRoute>
         </Switch>
