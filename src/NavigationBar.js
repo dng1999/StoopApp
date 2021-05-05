@@ -1,14 +1,14 @@
 import React from 'react'
 import { BrowserRouter as Router, NavLink } from 'react-router-dom'
 
-const NUM_NAVBAR_ITEMS = 5
+const NUM_NAVBAR_ITEMS = 3
 
 // One menu item to go on the navigation bar
 class NavBarItem extends React.Component {
     render() {
         return (
             <div
-                class="navBtn"
+                className="navBtn"
                 style={{
                     position: "absolute",
                     backgroundColor: "black",
@@ -69,20 +69,20 @@ class NavBar extends React.Component {
                 </NavBarItem>
 
                 {/* Temp */}
-                <NavBarItem
+                /*<NavBarItem
                     num={3}
                     url="/login"
                 >
                     Login
-                </NavBarItem>
+                </NavBarItem>*/
 
                 {/* Temp */}
-                <NavBarItem
+                /*<NavBarItem
                     num={4}
                     url="/register"
                 >
                     Register
-                </NavBarItem>
+                </NavBarItem>*/
             </div>
         )
     }

@@ -5,7 +5,7 @@ import axios from 'axios';
 class UserProfile extends React.Component {
   render() {
     return (
-      <div class="userProfile">
+      <div className="userProfile">
         Username<br/>
         Email<br/>
         Phone Number
@@ -17,10 +17,10 @@ class UserProfile extends React.Component {
 class SettingToggle extends React.Component {
   render() {
     return (
-      <div class="settingRow">
+      <div className="settingRow">
         <label>
-          <div class="settingName">{this.props.name}</div>
-          <div class="settingValue">{this.props.value}</div>
+          <div className="settingName">{this.props.name}</div>
+          <div className="settingValue">{this.props.value}</div>
         </label>
       </div>
     );
@@ -55,9 +55,9 @@ class SettingScreen extends React.Component {
 
   render() {
     return (
-      <div class="container">
-        <div class="form-box">
-          <div class="setting-container">
+      <div className="container">
+        <div className="form-box">
+          <div className="setting-container">
             <UserProfile />
             <SettingToggle name="test" value="test"/>
             {this.renderSettingsToggle()}

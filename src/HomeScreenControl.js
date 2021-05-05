@@ -8,7 +8,7 @@ class HSControl extends React.Component {
     render() {
         return (
             <button
-                class="mapControl"
+                className="mapControl"
                 onClick={this.props.onClick}
                 style={{
                     border: "none",
