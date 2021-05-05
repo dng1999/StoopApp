@@ -4,12 +4,15 @@ from flask_session import Session
 from dotenv import load_dotenv
 import pyrebase
 import os
+import redis
 
 load_dotenv()
 
 app = Flask(__name__, static_folder='build/', static_url_path='/')
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_REDIS'] = redis.from_url(os.environ['REDISTOGO_URL'])
 Session(app)
 CORS(app)
 
@@ -51,7 +54,7 @@ def login():
 @app.route("/api/logout", methods=["POST"])
 def logout():
     try:
-        session['user'] = None
+        session.pop('user', None)
         return jsonify("Logged out"), 201
     except Exception as e:
         message = "User not logged in"
