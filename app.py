@@ -78,22 +78,30 @@ def get_settings():
     setting_names = ['Listing Alerts']
     #User id should be in session var
     user_prefs = db.child('users').child(session.get('uid')).child('settings')
+    #Check if db path exists
     if not user.shallow().get(session.get('token')).val():
         user_prefs.set({'Listing Alerts': 'Off'}, session['token'])
 
-    #Get settings from database and send to frontend if key in setting_names
+    #Get settings from database and send to frontend
     if request.method == 'GET':
         setting_vals = {}
+        #Get settings from database and ignore any misc settings
         for key, value in user_prefs.each():
             if key in setting_names:
                 setting_vals[key] = value
-            else:
-                setting_vals[key] = '0'
+                setting_names.remove(key)
+        #Check if any settings not in the database and add them
+        for item in setting_names:
+            setting_vals[item] = 'Off'
+            user_prefs.set({item: 'Off'}, session['token'])
         return jsonify(values=setting_vals)
 
     #Update settings in database
     elif request.method == 'POST':
-        #if key is in setting_names, update
+        data = request.get_json()
+        name = data["settingName"]
+        value = data["settingValue"]
+        user_prefs.update({name: value}, session['token'])
         return jsonify(message="Got it!")
 
 @app.route('/<path:path>')
