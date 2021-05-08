@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, app, session
 from flask_cors import CORS
 from flask_session import Session
+from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 import pyrebase
 import os
@@ -13,6 +14,7 @@ app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.from_url(os.environ['REDISTOGO_URL'])
+socketio = SocketIO(app)
 Session(app)
 CORS(app)
 
@@ -35,6 +37,19 @@ db = firebase.database()
 def index():
     return app.send_static_file('index.html')
 
+@socketio.on('set_taken')
+def takenListener(json_data):
+    emit('echo', {'echo': 'The following listing has been taken: '}) #test
+    return "nothing to see here"
+    if session['lalert'] == "On":
+        sub_list = db.child('users').child(session.get('uid')).child('subscriptions').get(session.get('token')).val()
+        for sub in sub_list:
+            #If there's an update in one of the user's subscriptions
+            if sub == json_data['listingID']:
+                #Check if sub was on and listing was taken
+                if sub_list[sub] == "On":
+                    db.child('users').child(session.get('uid')).child('subscriptions').update({sub: "Off"},session.get('token'))
+                    emit('echo', {'echo': 'The following listing has been taken: '+sub})
 
 @app.route("/api/login", methods=["POST"])
 def login():
@@ -104,6 +119,7 @@ def get_settings():
         data = request.get_json()
         name = data["settingName"]
         value = data["settingValue"]
+        session['lalert'] = value
         db.child('users').child(session.get('uid')).child('settings').update({name: value}, session.get('token'))
         return jsonify(message="Got it!")
 
@@ -116,4 +132,4 @@ def not_found(e):
     return app.send_static_file('index.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=False, port=int(os.environ.get("PORT", 5000)))
+    socketio.run(app, host='0.0.0.0', debug=False, port=int(os.environ.get("PORT", 5000)))

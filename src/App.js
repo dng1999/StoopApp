@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Switch, Link } from 'react-router-dom';
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import io from 'socket.io-client';
 
 import Map from './HomeScreen';
 import Login from "./Login";
@@ -12,6 +13,8 @@ import NavBar from "./NavigationBar";
 import './App.css';
 
 let token = null;
+
+const socket = io();
 
 const requireLogin = (to, from, next) => {
   if (to.meta.auth) {
@@ -25,12 +28,29 @@ const requireLogin = (to, from, next) => {
 };
 
 function App() {
+  const [initialized, setInitialized] = useState(false);
   const rerender = useState(0)[1];
+
+  const subscribeToListingAlerts = () => {
+    socket.on('echo', function(data){
+      toast.info(data.echo);
+    });
+  };
+
+  function testClick(){
+    socket.emit("set_taken", "test");
+  };
 
   function setToken(newToken) {
     token = newToken;
     rerender(Math.random());
   }
+
+  useEffect(() => {
+   if (!initialized) {
+      subscribeToListingAlerts();
+    }
+  });
 
   return (
     <Router>
