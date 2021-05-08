@@ -16,9 +16,13 @@ class UserProfile extends React.Component {
 }
 
 class SettingToggle extends React.Component {
+  toggleSetting(name){
+    this.props.action(name);
+  }
+
   render() {
     return (
-      <div className="settingRow" onClick={this.props.action}>
+      <div className="settingRow" onClick={this.toggleSetting.bind(this, this.props.name)}>
         <label>
           <div className="settingName">{this.props.name}</div>
           <div className="settingValue">{this.props.value}</div>
@@ -40,8 +44,6 @@ class SettingScreen extends React.Component {
   componentDidMount(){
     axios.get('/api/settings')
       .then((response) => {
-        console.log("GET response");
-        console.log(response.data);
         this.setState({values: response.data.values});
       })
       .catch(function (error) {
@@ -61,11 +63,10 @@ class SettingScreen extends React.Component {
     else {
       valueCopy[name] = 'Off';
     }
-    const settingObj = {
+    axios.post('/api/settings', {
       settingName: name,
       settingValue: valueCopy[name]
-    };
-    axios.post('/api/settings', settingObj)
+    })
       .then((response) => {
         this.setState({values: valueCopy});
       })
@@ -90,7 +91,6 @@ class SettingScreen extends React.Component {
         <div className="form-box">
           <div className="setting-container">
             <UserProfile />
-            <SettingToggle name="test" value="test"/>
             {this.renderSettingsToggle()}
           </div>
         </div>

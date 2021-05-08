@@ -46,6 +46,7 @@ def login():
         response = auth.refresh(response['refreshToken'])
         session['token'] = response['idToken']
         session['uid'] = response['userId']
+        session['lalert'] = db.child('users').child(session.get('uid')).child('settings').child('Listing Alerts').get(session.get('token')).val()
         return jsonify(response), 201
     except Exception as e:
         message = "Please check your credentials."
@@ -55,8 +56,8 @@ def login():
 @app.route("/api/logout", methods=["POST"])
 def logout():
     try:
-        session.pop('uid', None)
-        session.pop('token', None)
+        for key in list(session.keys()):
+            session.pop(key)
         return jsonify("Logged out"), 201
     except Exception as e:
         message = "User not logged in"
@@ -76,24 +77,26 @@ def register():
 @app.route('/api/settings', methods=['GET', 'POST'])
 def get_settings():
     setting_names = ['Listing Alerts']
+
     #User id should be in session var
-    user_prefs = db.child('users').child(session.get('uid')).child('settings')
     #Check if db path exists
-    if not user.shallow().get(session.get('token')).val():
-        user_prefs.set({'Listing Alerts': 'Off'}, session['token'])
+    if not db.child('users').child(session.get('uid')).child('settings').shallow().get(session.get('token')).val():
+        db.child('users').child(session.get('uid')).child('settings').set({'Listing Alerts': 'Off'}, session.get('token'))
 
     #Get settings from database and send to frontend
     if request.method == 'GET':
+        user_prefs = db.child('users').child(session.get('uid')).child('settings').get(session.get('token')).val()
         setting_vals = {}
         #Get settings from database and ignore any misc settings
-        for key, value in user_prefs.each():
+        for key in user_prefs:
+            value = user_prefs[key]
             if key in setting_names:
                 setting_vals[key] = value
                 setting_names.remove(key)
         #Check if any settings not in the database and add them
         for item in setting_names:
             setting_vals[item] = 'Off'
-            user_prefs.set({item: 'Off'}, session['token'])
+            db.child('users').child(session.get('uid')).child('settings').set({item: 'Off'}, session.get('token'))
         return jsonify(values=setting_vals)
 
     #Update settings in database
@@ -101,7 +104,7 @@ def get_settings():
         data = request.get_json()
         name = data["settingName"]
         value = data["settingValue"]
-        user_prefs.update({name: value}, session['token'])
+        db.child('users').child(session.get('uid')).child('settings').update({name: value}, session.get('token'))
         return jsonify(message="Got it!")
 
 @app.route('/<path:path>')
