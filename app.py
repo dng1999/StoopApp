@@ -37,22 +37,6 @@ db = firebase.database()
 def index():
     return app.send_static_file('index.html')
 
-@socketio.on('set_taken')
-def takenListener(json_data):
-    emit('broadcast_taken', {'message': 'The following listing has been taken: '+json_data['listingID'], 'listingID': json_data['listingID']}, broadcast=True)
-
-@socketio.on('client_taken')
-def checkLAlert(json_data):
-    if session['lalert'] == "On" and db.child('users').child(session.get('uid')).child('subscriptions').shallow().get(session.get('token')).val():
-        sub_list = db.child('users').child(session.get('uid')).child('subscriptions').get(session.get('token')).val()
-        for sub in sub_list:
-            #If there's an update in one of the user's subscriptions
-            if sub == json_data['listingID']:
-                #Check if sub was on and listing was taken
-                if sub_list[sub] == "On":
-                    db.child('users').child(session.get('uid')).child('subscriptions').update({sub: "Off"},session.get('token'))
-                    emit('notify_client', {'message': json_data['message']})
-
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -63,6 +47,7 @@ def login():
         response = auth.refresh(response['refreshToken'])
         session['token'] = response['idToken']
         session['uid'] = response['userId']
+        session['email'] = email
         session['lalert'] = db.child('users').child(session.get('uid')).child('settings').child('Listing Alerts').get(session.get('token')).val()
         return jsonify(response), 201
     except Exception as e:
@@ -114,7 +99,7 @@ def get_settings():
         for item in setting_names:
             setting_vals[item] = 'Off'
             db.child('users').child(session.get('uid')).child('settings').set({item: 'Off'}, session.get('token'))
-        return jsonify(values=setting_vals)
+        return jsonify(values=setting_vals, email=session.get('email'))
 
     #Update settings in database
     elif request.method == 'POST':
@@ -124,6 +109,93 @@ def get_settings():
         session['lalert'] = value
         db.child('users').child(session.get('uid')).child('settings').update({name: value}, session.get('token'))
         return jsonify(message="Got it!")
+
+@app.route('/api/trackListing', methods=['POST'])
+def track_listing():
+    listingID = request.get_json()['listingID']
+    if not db.child('listings').child(listingID).get(session.get('token')).val():
+        return jsonify("Listing couldn't be found"), 404
+    elif db.child('users').child(session.get('uid')).child('subscriptions').child(listingID).get(session.get('token')).val():
+        return jsonify("Already tracking listing"), 404
+    else:
+        db.child('users').child(session.get('uid')).child('subscriptions').set({listingID: 'On'}, session.get('token'))
+        return jsonify("Tracking listing"), 201
+
+@app.route('/api/markTaken', methods=['POST'])
+def mark_taken():
+    listingID = request.get_json()['listingID']
+    if not db.child('listings').child(listingID).get(session.get('token')).val():
+        return jsonify("Listing couldn't be found"), 404
+    else:
+        db.child('listings').child(listingID).update({'taken': "Yes"}, session.get('token'));
+        return jsonify("Listing updated"), 201
+
+@socketio.on('set_taken')
+def taken_listener(json_data):
+    emit('broadcast_taken', {'message': 'The following listing has been taken: '+json_data['listingID'], 'listingID': json_data['listingID']}, broadcast=True)
+
+@socketio.on('client_taken')
+def check_LAlert(json_data):
+    if session['lalert'] == "On" and db.child('users').child(session.get('uid')).child('subscriptions').shallow().get(session.get('token')).val():
+        sub_list = db.child('users').child(session.get('uid')).child('subscriptions').get(session.get('token')).val()
+        for sub in sub_list:
+            #If there's an update in one of the user's subscriptions
+            if sub == json_data['listingID']:
+                #Check if sub was on and listing was taken
+                if sub_list[sub] == "On":
+                    db.child('users').child(session.get('uid')).child('subscriptions').update({sub: "Off"},session.get('token'))
+                    emit('notify_client', {'message': json_data['message']})
+
+@app.route('/api/reportListing', methods=['POST'])
+def report_listing():
+    listingID = request.get_json()['listingID']
+    if not db.child('listings').child(listingID).get(session.get('token')).val():
+        return jsonify("Listing couldn't be found"), 404
+    else:
+        if not db.child('listings').child(listingID).child('reports').get(session.get('token')).val():
+            db.child('listings').child(listingID).child('reports').set(0, session.get('token'))
+        else:
+            reportCount = int(db.child('listings').child(listingID).child('reports').get(session.get('token')).val()) + 1
+            db.child('listings').child(listingID).child('reports').set(reportCount, session.get('token'))
+        return jsonify(message="Listing has been reported"), 201
+
+@app.route('/api/listing', methods=['POST'])
+def listing_info():
+    listingID = request.get_json()['listingID']
+    if request.method == 'POST':
+        if not db.child('listings').child(listingID).get(session.get('token')).val():
+            return jsonify("Listing couldn't be found"), 404
+        else:
+            listing = db.child('listings').child(listingID).get(session.get('token')).val()
+            ptitle = listing['title']
+            pdesc = listing['desc']
+            if 'photos' in listing:
+                pphotos = listing['photos']
+            else:
+                pphotos = {1: None}
+            if 'comments' in listing:
+                pcommentList = listing['comments']
+            else:
+                pcommentList = {}
+            ptaken = listing['taken']
+            return jsonify(title=ptitle, desc=pdesc, photos=pphotos, commentList=pcommentList, taken=ptaken), 201
+
+@app.route('/api/addComment', methods=['POST'])
+def add_comment():
+    data = request.get_json()
+    listingID = data['listingID']
+    comment = data['comment']
+    if not db.child('listings').child(listingID).get(session.get('token')).val():
+        return jsonify("Listing couldn't be found"), 404
+    else:
+        commentCount = db.child('listings').child(listingID).child('comments').get(session.get('token')).val()
+        if commentCount:
+            commentCount = len(commentCount)
+        else:
+            commentCount = 0
+        db.child('listings').child(listingID).child('comments').child(commentCount).set({'author': session.get('email'), 'content': comment},session.get('token'))
+        pcommentList = db.child('listings').child(listingID).child('comments').get(session.get('token')).val()
+        return jsonify(message = "Comment added", commentList = pcommentList), 201
 
 @app.route('/<path:path>')
 def static_file(path):

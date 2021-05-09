@@ -6,7 +6,6 @@ import registerPhoto from "./welcome.svg";
 
 export default function Register({ setToken }) {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -22,7 +21,6 @@ export default function Register({ setToken }) {
     axios
       .post("/api/register", {
         email,
-        name,
         password,
       })
       .then((response) => {
@@ -53,21 +51,6 @@ export default function Register({ setToken }) {
             <div className="input-group my-4">
               <div className="input-group-prepend">
                 <span className="input-group-text">
-                  <i className="fa fa-user"></i>
-                </span>
-              </div>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Username"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                required
-              />
-            </div>
-            <div className="input-group my-4">
-              <div className="input-group-prepend">
-                <span className="input-group-text">
                   <i className="fa fa-envelope"></i>
                 </span>
               </div>
@@ -87,7 +70,7 @@ export default function Register({ setToken }) {
                 </span>
               </div>
               <input
-                type="text"
+                type="password"
                 className="form-control"
                 placeholder="Password"
                 value={password}
@@ -102,7 +85,7 @@ export default function Register({ setToken }) {
                 </span>
               </div>
               <input
-                type="text"
+                type="password"
                 className="form-control"
                 placeholder="Confirm Password"
                 value={confirmPassword}

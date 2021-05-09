@@ -7,9 +7,7 @@ class UserProfile extends React.Component {
   render() {
     return (
       <div className="userProfile">
-        Username<br/>
-        Email<br/>
-        Phone Number
+        Email: {this.props.email}
       </div>
     );
   }
@@ -37,14 +35,15 @@ class SettingScreen extends React.Component {
     super(props);
     this.updateSetting = this.updateSetting.bind(this);
     this.state = {
-      values: {}
+      values: {},
+      email: ""
     };
   }
 
   componentDidMount(){
     axios.get('/api/settings')
       .then((response) => {
-        this.setState({values: response.data.values});
+        this.setState({values: response.data.values, email: response.data.email});
       })
       .catch(function (error) {
         toast.error(
@@ -90,7 +89,7 @@ class SettingScreen extends React.Component {
       <div className="container">
         <div className="form-box">
           <div className="setting-container">
-            <UserProfile />
+            <UserProfile email={this.state.email}/>
             {this.renderSettingsToggle()}
           </div>
         </div>
