@@ -30,13 +30,16 @@ const requireLogin = (to, from, next) => {
 };
 
 const subscribeToListingAlerts = () => {
-  socket.on('echo', function(data){
-    toast.info(data.echo);
+  socket.on('broadcast_taken', function(data){
+    socket.emit('client_taken', {'message': data.message, 'listingID': data.listingID});
+  });
+  socket.on('notify_client', function(data){
+    toast.info(data.message);
   });
 };
 
 function testClick(){
-  socket.emit("set_taken", "test");
+  socket.emit("set_taken", {'listingID':'test'});
 };
 
 function App() {

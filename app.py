@@ -39,9 +39,11 @@ def index():
 
 @socketio.on('set_taken')
 def takenListener(json_data):
-    emit('echo', {'echo': 'The following listing has been taken: '}, broadcast=True) #test
-    return "nothing to see here"
-    if session['lalert'] == "On":
+    emit('broadcast_taken', {'message': 'The following listing has been taken: '+json_data['listingID'], 'listingID': json_data['listingID']}, broadcast=True)
+
+@socketio.on('client_taken')
+def checkLAlert(json_data):
+    if session['lalert'] == "On" and db.child('users').child(session.get('uid')).child('subscriptions').shallow().get(session.get('token')).val():
         sub_list = db.child('users').child(session.get('uid')).child('subscriptions').get(session.get('token')).val()
         for sub in sub_list:
             #If there's an update in one of the user's subscriptions
@@ -49,7 +51,7 @@ def takenListener(json_data):
                 #Check if sub was on and listing was taken
                 if sub_list[sub] == "On":
                     db.child('users').child(session.get('uid')).child('subscriptions').update({sub: "Off"},session.get('token'))
-                    emit('echo', {'echo': 'The following listing has been taken: '+sub}, broadcast=True)
+                    emit('notify_client', {'message': json_data['message']})
 
 @app.route("/api/login", methods=["POST"])
 def login():
