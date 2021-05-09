@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import loginPhoto from "./login.svg";
 import "font-awesome/css/font-awesome.min.css";
 
-export default function Login({ setToken, logout }) {
+export default function Login({ socketConn, setToken, logout }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
@@ -14,6 +14,7 @@ export default function Login({ setToken, logout }) {
     axios
       .post("/api/logout")
       .then(() => {
+        socketConn('disconnect');
         setToken(null);
         history.push("/login");
       })
@@ -32,6 +33,7 @@ export default function Login({ setToken, logout }) {
     axios
       .post("/api/login", { email, password })
       .then((response) => {
+        socketConn('connect');
         setToken(response.data);
         toast.success("Logged in successfully!");
         history.push("/");

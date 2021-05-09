@@ -39,7 +39,7 @@ def index():
 
 @socketio.on('set_taken')
 def takenListener(json_data):
-    emit('echo', {'echo': 'The following listing has been taken: '}) #test
+    emit('echo', {'echo': 'The following listing has been taken: '}, broadcast=True) #test
     return "nothing to see here"
     if session['lalert'] == "On":
         sub_list = db.child('users').child(session.get('uid')).child('subscriptions').get(session.get('token')).val()
@@ -49,7 +49,7 @@ def takenListener(json_data):
                 #Check if sub was on and listing was taken
                 if sub_list[sub] == "On":
                     db.child('users').child(session.get('uid')).child('subscriptions').update({sub: "Off"},session.get('token'))
-                    emit('echo', {'echo': 'The following listing has been taken: '+sub})
+                    emit('echo', {'echo': 'The following listing has been taken: '+sub}, broadcast=True)
 
 @app.route("/api/login", methods=["POST"])
 def login():

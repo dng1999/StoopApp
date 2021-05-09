@@ -14,7 +14,9 @@ import './App.css';
 
 let token = null;
 
-const socket = io();
+const socket = io({
+  autoConnect: false
+});
 
 const requireLogin = (to, from, next) => {
   if (to.meta.auth) {
@@ -27,40 +29,48 @@ const requireLogin = (to, from, next) => {
   }
 };
 
+const subscribeToListingAlerts = () => {
+  socket.on('echo', function(data){
+    toast.info(data.echo);
+  });
+};
+
+function testClick(){
+  socket.emit("set_taken", "test");
+};
+
 function App() {
   const [initialized, setInitialized] = useState(false);
   const rerender = useState(0)[1];
 
-  const subscribeToListingAlerts = () => {
-    socket.on('echo', function(data){
-      toast.info(data.echo);
-    });
-  };
-
-  function testClick(){
-    socket.emit("set_taken", "test");
+  function socketConn(mode) {
+    if (mode == 'connect'){
+      socket.connect();
+    }
+    else if (mode == 'disconnect'){
+      socket.disconnect();
+    }
   };
 
   function setToken(newToken) {
     token = newToken;
     rerender(Math.random());
-  }
+  };
 
   useEffect(() => {
-   if (!initialized) {
+    if (!initialized) {
+      setInitialized(true);
       subscribeToListingAlerts();
     }
   });
 
   return (
     <Router>
-      <ul>
-        <li><button onClick = {testClick}>Test Alert</button></li>
-      </ul>
+      <button onClick={testClick}>Test</button>
       <GuardProvider guards={[requireLogin]}>
         <Switch>
           <GuardedRoute path="/login">
-            <Login setToken={setToken} logout={false}/>
+            <Login socketConn={socketConn} setToken={setToken} logout={false}/>
           </GuardedRoute>
           <GuardedRoute path="/register">
             <Register setToken={setToken}/>
@@ -68,7 +78,7 @@ function App() {
           <GuardedRoute path="/" exact component={Map} meta={{ auth: true }} />
           <GuardedRoute path="/settings" exact component={SettingScreen} meta={{ auth: true }} />
           <GuardedRoute path="/logout" meta={{ auth: true }}>
-            <Login setToken={setToken} logout={true}/>
+            <Login socketConn={socketConn} setToken={setToken} logout={true}/>
           </GuardedRoute>
         </Switch>
       </GuardProvider>
