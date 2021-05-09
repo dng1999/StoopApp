@@ -54,6 +54,9 @@ function App() {
 
   return (
     <Router>
+      <ul>
+        <li><button onClick = {testClick}>Test Alert</button></li>
+      </ul>
       <GuardProvider guards={[requireLogin]}>
         <Switch>
           <GuardedRoute path="/login">
