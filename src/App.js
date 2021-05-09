@@ -38,8 +38,8 @@ const subscribeToListingAlerts = () => {
   });
 };
 
-function testClick(){
-  socket.emit("set_taken", {'listingID':'test'});
+function emitTaken(id){
+  socket.emit("set_taken", {'listingID':id});
 };
 
 function App() {
