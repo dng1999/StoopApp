@@ -1,4 +1,5 @@
 import React, { useEffect } from "react"
+import axios from "axios"
 import { GoogleMap, useLoadScript, Marker, InfoWindow, MarkerClusterer } from "@react-google-maps/api"
 import HSControl from './HomeScreenControl'
 import RequestFullscreen from './RequestFullscreen'
@@ -10,7 +11,7 @@ import mapStyle from "./HomeScreenStyle" // Google Map style JSON
 import markersList from "./DefaultMarkers"
 
 import {ReactComponent as RecenterIcon} from "./recenter.svg" // Recenter button icon
-import {ReactComponent as AddListingIcon} from "./add_listing.svg" // Add listing button icon 
+import {ReactComponent as AddListingIcon} from "./add_listing.svg" // Add listing button icon
 
 // Temporary variables for holding listing data
 var lastAddedTitle = "";
@@ -59,7 +60,7 @@ function showPos(pos) {
     console.log(pos.coords.latitude + "\n" + pos.coords.longitude);
 }
 
-export default function Map() {
+export default function Map({emitTaken}) {
     // Load API
     const {isLoaded, loadError} = useLoadScript({
         googleMapsApiKey: "AIzaSyBX7QahP1yTzu3i5myK8ZztY9BHWGDqRd4",
@@ -88,6 +89,14 @@ export default function Map() {
 
     // Add a new marker to the current state once GPS position is retrieved
     function onGetGeoPos(pos) {
+        axios.post('/api/addListing', {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          id: String(listingId),
+          title: lastAddedTitle,
+          desc: lastAddedDescription,
+          type: lastAddedType
+        });
         setMarkers((current) => [
             ...current,
             {
@@ -157,7 +166,7 @@ export default function Map() {
         />}
 
         {listingScreenMode == 1 &&
-        <AddListing 
+        <AddListing
             onClickClose={onCloseAddListing}
             onClickAdd={onAddListing}
             onSelectType={onListingSelectType}
@@ -165,14 +174,16 @@ export default function Map() {
         {/*}*/}
 
         {listingScreenMode == 2 &&
-        <Listing 
-            name={selectedMarker.name} 
+        <Listing
+            emitTaken={emitTaken}
+            aid={selectedMarker.id - 1}
+            name={selectedMarker.name}
             descText={selectedMarker.desc}
-            closeFunc={onCloseListing} 
+            closeFunc={onCloseListing}
         />}
 
         {listingScreenMode == 3 &&
-        <Filters 
+        <Filters
             onClickClose={() => {setListingScreenMode(0);}}
             onClickAdd={onApplyFilters}
             onSelectType={setLastFilteredType}
@@ -215,8 +226,8 @@ export default function Map() {
             options={DEFAULT_OPTIONS}
             onLoad={onMapLoad}
         >
-            {markers.map(marker => (filterType == "none" || filterType == marker.type) && <Marker 
-                key={marker.id} 
+            {markers.map(marker => (filterType == "none" || filterType == marker.type) && <Marker
+                key={marker.id}
                 position={{lat: marker.lat, lng: marker.lng}}
                 onClick={() => {
                     setSelected(marker);

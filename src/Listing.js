@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 export default function Listing({ emitTaken, aid, name, descText, closeFunc }) {
   const [fetched, setFetched] = useState(false);
-  const [id, setId] = useState(aid);
+  const [id, setId] = useState(String(aid));
   const [title, setTitle] = useState("Title");
   const [desc, setDesc] = useState("Description");
   const [photos, setPhotos] = useState({1: null, 2: null, 3: null, 4: null});
@@ -70,26 +70,26 @@ export default function Listing({ emitTaken, aid, name, descText, closeFunc }) {
   }
 
   function getListing(){
-    // axios.post('/api/listing', {
-    //   listingID: id
-    // })
-    // .then((response) => {
-    //   setTitle(response.data.title);
-    //   setDesc(response.data.desc);
-    //   setPhotos(response.data.photos);
-    //   setCommentList(response.data.commentList);
-    //   if (response.data.taken == "Yes"){
-    //     setTaken(true);
-    //   }
-    //   else {setTaken(false);}
-    // })
-    // .catch(function (error) {
-    //   toast.error(
-    //     error.response
-    //       ? error.response.data
-    //       : "Error trying to get listing."
-    //   )
-    // })
+     axios.post('/api/listing', {
+       listingID: id
+     })
+     .then((response) => {
+       setTitle(response.data.title);
+       setDesc(response.data.desc);
+       setPhotos(response.data.photos);
+       setCommentList(response.data.commentList);
+       if (response.data.taken == "Yes"){
+         setTaken(true);
+       }
+       else {setTaken(false);}
+     })
+     //.catch(function (error) {
+     //   toast.error(
+     //     error.response
+     //       ? error.response.data
+     //       : "Error trying to get listing."
+     //   )
+     // })
     setTitle(name);
     setDesc(descText);
   }
@@ -137,7 +137,7 @@ export default function Listing({ emitTaken, aid, name, descText, closeFunc }) {
   }
 
   return (
-    <div 
+    <div
       className="container"
       style={{
         position: "absolute",

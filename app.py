@@ -197,6 +197,18 @@ def add_comment():
         pcommentList = db.child('listings').child(listingID).child('comments').get(session.get('token')).val()
         return jsonify(message = "Comment added", commentList = pcommentList), 201
 
+@app.route('/api/addListing', methods=['POST'])
+def add_listing():
+    data = request.get_json()
+    listingID = data['id']
+    plat = data['lat']
+    plong = data['lng']
+    ptitle = data['title']
+    pdesc = data['desc']
+    ptype = data['type']
+    db.child('listings').child(listingID).set({'title': ptitle, 'desc': pdesc, 'taken': 'No', 'lat': plat, 'lng': plong, 'type': ptype}, session.get('token'))
+    return jsonify(message = "Listing added"), 201
+
 @app.route('/<path:path>')
 def static_file(path):
     return app.send_static_file(path)
