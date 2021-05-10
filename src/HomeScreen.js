@@ -165,10 +165,10 @@ export default function Map({emitTaken}) {
 
     return <div>
         {/* Shows up at the beginning of the user session to request that they turn on fullscreen */}
-        {/*showRequestFS == false &&
+        {showRequestFS == false &&
         <RequestFullscreen
             onClick={onRequestFS}
-        />*/}
+        />}
 
         {listingScreenMode == 1 &&
         <AddListing
