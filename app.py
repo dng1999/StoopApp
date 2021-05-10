@@ -118,7 +118,7 @@ def track_listing():
     elif db.child('users').child(session.get('uid')).child('subscriptions').child(listingID).get(session.get('token')).val():
         return jsonify("Already tracking listing"), 404
     else:
-        db.child('users').child(session.get('uid')).child('subscriptions').set({listingID: 'On'}, session.get('token'))
+        db.child('users').child(session.get('uid')).child('subscriptions').child(listingID).set('On', session.get('token'))
         return jsonify("Tracking listing"), 201
 
 @app.route('/api/markTaken', methods=['POST'])
@@ -152,8 +152,8 @@ def report_listing():
     if not db.child('listings').child(listingID).get(session.get('token')).val():
         return jsonify("Listing couldn't be found"), 404
     else:
-        if not db.child('listings').child(listingID).child('reports').get(session.get('token')).val():
-            db.child('listings').child(listingID).child('reports').set(0, session.get('token'))
+        if 'reports' not in db.child('listings').child(listingID).get(session.get('token')).val():
+            db.child('listings').child(listingID).child('reports').set(1, session.get('token'))
         else:
             reportCount = int(db.child('listings').child(listingID).child('reports').get(session.get('token')).val()) + 1
             db.child('listings').child(listingID).child('reports').set(reportCount, session.get('token'))
@@ -200,14 +200,26 @@ def add_comment():
 @app.route('/api/addListing', methods=['POST'])
 def add_listing():
     data = request.get_json()
-    listingID = data['id']
+    listingID = str(len(db.child('listings').get(session.get('token')).val()))
     plat = data['lat']
     plong = data['lng']
     ptitle = data['title']
     pdesc = data['desc']
     ptype = data['type']
     db.child('listings').child(listingID).set({'title': ptitle, 'desc': pdesc, 'taken': 'No', 'lat': plat, 'lng': plong, 'type': ptype}, session.get('token'))
-    return jsonify(message = "Listing added"), 201
+    return get_all_listings()
+
+@app.route('/api/getAllListings', methods=['GET'])
+def get_all_listings():
+    allListings = db.child('listings').get(session.get('token')).val()
+    notTaken = []
+    for listingID in allListings:
+        id = listingID
+        attr = allListings[id]
+        if not attr['taken'] == "Yes":
+            attr['id'] = str(id)
+            notTaken.append(attr)
+    return jsonify(dbMarkers = notTaken), 200
 
 @app.route('/<path:path>')
 def static_file(path):

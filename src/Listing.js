@@ -18,6 +18,9 @@ export default function Listing({ emitTaken, aid, name, descText, closeFunc }) {
       axios.post('/api/trackListing', {
         listingID: id
       })
+      .then(() => {
+        toast.info("Listing is being tracked.")
+      })
       .catch(function (error) {
         toast.error(
           error.response

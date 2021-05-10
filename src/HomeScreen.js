@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import axios from "axios"
 import { GoogleMap, useLoadScript, Marker, InfoWindow, MarkerClusterer } from "@react-google-maps/api"
 import HSControl from './HomeScreenControl'
@@ -67,7 +67,8 @@ export default function Map({emitTaken}) {
         libraries: LIBRARIES
     });
 
-    const [markers, setMarkers] = React.useState([markersList[0], markersList[1], markersList[2], markersList[3], markersList[4], markersList[5], markersList[6], markersList[7], markersList[8], markersList[9]]); // Map markers state
+    const [fetched, setFetched] = useState(false);
+    const [markers, setMarkers] = React.useState([]); // Map markers state
     const [showRequestFS, setShowRequestFS] = React.useState(!DEFAULT_REQUEST_FULLSCREEN); // Fullscreen state
     const [listingScreenMode, setListingScreenMode] = React.useState(DEFAULT_LISTING_SCREEN_MODE); // Current "listing" screen
     const [selectedMarker, setSelected] = React.useState(null);
@@ -83,6 +84,13 @@ export default function Map({emitTaken}) {
         mapRef.current.setZoom(DEFAULT_ZOOM);
     }, []);
 
+    useEffect(() => {
+      if (!fetched){
+        getAllListings();
+        setFetched(true);
+      }
+    });
+
     // TODO: Implement error handling
     if (loadError) return "Error loading map";
     if (!isLoaded) return "Loading map..."
@@ -90,24 +98,15 @@ export default function Map({emitTaken}) {
     // Add a new marker to the current state once GPS position is retrieved
     function onGetGeoPos(pos) {
         axios.post('/api/addListing', {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          id: String(listingId),
+          lat: 40.71, //pos.coords.latitude,
+          lng: 40.71, //pos.coords.longitude,
           title: lastAddedTitle,
           desc: lastAddedDescription,
           type: lastAddedType
-        });
-        setMarkers((current) => [
-            ...current,
-            {
-                lat: pos.coords.latitude,
-                lng: pos.coords.longitude,
-                id: listingId,
-                name: lastAddedTitle,
-                desc: lastAddedDescription,
-                type: lastAddedType
-            }
-        ]);
+        })
+        .then((response) => {
+          setMarkers(response.data.dbMarkers);
+        })
     }
 
     // Receive current list of markers and add new one at location
@@ -134,7 +133,8 @@ export default function Map({emitTaken}) {
     function onAddListing(name, desc) {
         lastAddedTitle = name;
         lastAddedDescription = desc;
-        navigator.geolocation.getCurrentPosition(onGetGeoPos);
+        onGetGeoPos();
+        //navigator.geolocation.getCurrentPosition(onGetGeoPos);
         listingId++;
         setListingScreenMode(0);
     }
@@ -156,14 +156,19 @@ export default function Map({emitTaken}) {
         lastFilteredType = event.target.value;
     }
 
-
+    function getAllListings(){
+      axios.get('/api/getAllListings')
+      .then((response) => {
+        setMarkers(response.data.dbMarkers);
+      })
+    }
 
     return <div>
         {/* Shows up at the beginning of the user session to request that they turn on fullscreen */}
-        {showRequestFS == false &&
+        {/*showRequestFS == false &&
         <RequestFullscreen
             onClick={onRequestFS}
-        />}
+        />*/}
 
         {listingScreenMode == 1 &&
         <AddListing
@@ -176,7 +181,7 @@ export default function Map({emitTaken}) {
         {listingScreenMode == 2 &&
         <Listing
             emitTaken={emitTaken}
-            aid={selectedMarker.id - 1}
+            aid={selectedMarker.id}
             name={selectedMarker.name}
             descText={selectedMarker.desc}
             closeFunc={onCloseListing}

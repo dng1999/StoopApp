@@ -30,15 +30,19 @@ const requireLogin = (to, from, next) => {
 };
 
 const subscribeToListingAlerts = () => {
+  console.log("init sub");
   socket.on('broadcast_taken', function(data){
+    console.log("checking if client subbed");
     socket.emit('client_taken', {'message': data.message, 'listingID': data.listingID});
   });
   socket.on('notify_client', function(data){
+    console.log("client is subbed");
     toast.info(data.message);
   });
 };
 
 function emitTaken(id){
+  console.log("Emitting set_taken");
   socket.emit("set_taken", {'listingID':id});
 };
 
@@ -78,7 +82,9 @@ function App() {
           <GuardedRoute path="/register">
             <Register setToken={setToken}/>
           </GuardedRoute>
-          <GuardedRoute path="/" exact component={Map} meta={{ auth: true }} />
+          <GuardedRoute exact path="/" meta={{ auth: true }}>
+            <Map emitTaken={emitTaken}/>
+          </GuardedRoute>
           <GuardedRoute path="/settings" exact component={SettingScreen} meta={{ auth: true }} />
           <GuardedRoute path="/logout" meta={{ auth: true }}>
             <Login socketConn={socketConn} setToken={setToken} logout={true}/>
