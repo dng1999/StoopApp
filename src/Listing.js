@@ -2,13 +2,13 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-export default function Listing({ emitTaken, aid }) {
+export default function Listing({ emitTaken, aid, name, descText, closeFunc }) {
   const [fetched, setFetched] = useState(false);
   const [id, setId] = useState(aid);
   const [title, setTitle] = useState("Title");
   const [desc, setDesc] = useState("Description");
   const [photos, setPhotos] = useState({1: null, 2: null, 3: null, 4: null});
-  const [commentList, setCommentList] = useState({"test": {"author":"test auth", "content":"test comment"}});
+  const [commentList, setCommentList] = useState({});
 
   const [taken, setTaken] = useState(null);
   const [comment, setComment] = useState('');
@@ -70,26 +70,28 @@ export default function Listing({ emitTaken, aid }) {
   }
 
   function getListing(){
-    axios.post('/api/listing', {
-      listingID: id
-    })
-    .then((response) => {
-      setTitle(response.data.title);
-      setDesc(response.data.desc);
-      setPhotos(response.data.photos);
-      setCommentList(response.data.commentList);
-      if (response.data.taken == "Yes"){
-        setTaken(true);
-      }
-      else {setTaken(false);}
-    })
-    .catch(function (error) {
-      toast.error(
-        error.response
-          ? error.response.data
-          : "Error trying to get listing."
-      )
-    })
+    // axios.post('/api/listing', {
+    //   listingID: id
+    // })
+    // .then((response) => {
+    //   setTitle(response.data.title);
+    //   setDesc(response.data.desc);
+    //   setPhotos(response.data.photos);
+    //   setCommentList(response.data.commentList);
+    //   if (response.data.taken == "Yes"){
+    //     setTaken(true);
+    //   }
+    //   else {setTaken(false);}
+    // })
+    // .catch(function (error) {
+    //   toast.error(
+    //     error.response
+    //       ? error.response.data
+    //       : "Error trying to get listing."
+    //   )
+    // })
+    setTitle(name);
+    setDesc(descText);
   }
 
   function renderPhotos(){
@@ -135,11 +137,18 @@ export default function Listing({ emitTaken, aid }) {
   }
 
   return (
-    <div className="container">
+    <div 
+      className="container"
+      style={{
+        position: "absolute",
+        zIndex: 3,
+        left: "10vw",
+        width: "50w"
+      }}>
       <div className="form-box">
       {/*info*/}
-      <div className="header">{title}</div>
-      <div className="content text-left my-2">{desc}</div>
+      <div className="header" style={{color: "white"}}>{title}</div>
+      <div className="content text-left my-2" style={{color: "white"}}>{desc}</div>
       {renderPhotos()}
       {/*mark taken + report*/}
       <div>
@@ -165,6 +174,7 @@ export default function Listing({ emitTaken, aid }) {
           {renderComments()}
         </ul>
       </div>
+      <button className="btn btn-info btn-block my-2" onClick={closeFunc}>Close Listing</button>
       </div>
     </div>
   );

@@ -3,15 +3,33 @@ import { GoogleMap, useLoadScript, Marker, InfoWindow, MarkerClusterer } from "@
 import HSControl from './HomeScreenControl'
 import RequestFullscreen from './RequestFullscreen'
 import NavBar from "./NavigationBar"
+import Listing from "./Listing"
+import AddListing from "./AddListing"
+import Filters from "./Filters"
 import mapStyle from "./HomeScreenStyle" // Google Map style JSON
+import markersList from "./DefaultMarkers"
 
 import {ReactComponent as RecenterIcon} from "./recenter.svg" // Recenter button icon
-import {ReactComponent as AddListingIcon} from "./add_listing.svg" // Add listing button icon
+import {ReactComponent as AddListingIcon} from "./add_listing.svg" // Add listing button icon 
+
+// Temporary variables for holding listing data
+var lastAddedTitle = "";
+var lastAddedDescription = "";
+var lastAddedType = "";
+var lastRequestedTitle = "";
+var lastRequestedDescription = "";
+var lastFilteredType = "";
+
 
 // This will be tracked in the database later
 var listingId = 0;
 
-const DEFAULT_ZOOM = 8;
+/*
+1: add listing
+2: look at listing
+*/
+const DEFAULT_LISTING_SCREEN_MODE = 0;
+const DEFAULT_ZOOM = 10;
 const DEFAULT_REQUEST_FULLSCREEN = true;
 
 // Google API Libraries to use
@@ -48,8 +66,21 @@ export default function Map() {
         libraries: LIBRARIES
     });
 
-    const [markers, setMarkers] = React.useState([]); // Map markers state
+    const [markers, setMarkers] = React.useState([markersList[0], markersList[1], markersList[2], markersList[3], markersList[4], markersList[5], markersList[6], markersList[7], markersList[8], markersList[9]]); // Map markers state
     const [showRequestFS, setShowRequestFS] = React.useState(!DEFAULT_REQUEST_FULLSCREEN); // Fullscreen state
+    const [listingScreenMode, setListingScreenMode] = React.useState(DEFAULT_LISTING_SCREEN_MODE); // Current "listing" screen
+    const [selectedMarker, setSelected] = React.useState(null);
+    const [filterType, setFilter] = React.useState("none");
+
+    const mapRef = React.useRef();
+    const onMapLoad = React.useCallback((map) => {
+        mapRef.current = map;
+    }, []);
+
+    const panTo = React.useCallback((lat, lng) => {
+        mapRef.current.panTo({ lat, lng });
+        mapRef.current.setZoom(DEFAULT_ZOOM);
+    }, []);
 
     // TODO: Implement error handling
     if (loadError) return "Error loading map";
@@ -63,14 +94,16 @@ export default function Map() {
                 lat: pos.coords.latitude,
                 lng: pos.coords.longitude,
                 id: listingId,
+                name: lastAddedTitle,
+                desc: lastAddedDescription,
+                type: lastAddedType
             }
         ]);
     }
 
     // Receive current list of markers and add new one at location
     function handleAddListing() {
-        navigator.geolocation.getCurrentPosition(onGetGeoPos);
-        listingId++;
+        setListingScreenMode(1);
     }
 
     function onRequestFS() {
@@ -79,9 +112,39 @@ export default function Map() {
     }
 
     // DEBUG: REMOVE LATER
-    function testFunction2() {
-        console.log("Hello world 2")
+    function onRecenterMap() {
+        panTo(40.71, -74.006);
         setShowRequestFS(true);
+        // setListingScreenMode(3);
+    }
+
+    function onCloseAddListing() {
+        setListingScreenMode(0);
+    }
+
+    function onAddListing(name, desc) {
+        lastAddedTitle = name;
+        lastAddedDescription = desc;
+        navigator.geolocation.getCurrentPosition(onGetGeoPos);
+        listingId++;
+        setListingScreenMode(0);
+    }
+
+    function onCloseListing() {
+        setListingScreenMode(0);
+    }
+
+    function onListingSelectType(event) {
+        lastAddedType = event.target.value;
+    }
+
+    function onApplyFilters() {
+        setListingScreenMode(0);
+        setFilter(lastFilteredType);
+    }
+
+    function setLastFilteredType(event) {
+        lastFilteredType = event.target.value;
     }
 
 
@@ -93,6 +156,38 @@ export default function Map() {
             onClick={onRequestFS}
         />}
 
+        {listingScreenMode == 1 &&
+        <AddListing 
+            onClickClose={onCloseAddListing}
+            onClickAdd={onAddListing}
+            onSelectType={onListingSelectType}
+        />}
+        {/*}*/}
+
+        {listingScreenMode == 2 &&
+        <Listing 
+            name={selectedMarker.name} 
+            descText={selectedMarker.desc}
+            closeFunc={onCloseListing} 
+        />}
+
+        {listingScreenMode == 3 &&
+        <Filters 
+            onClickClose={() => {setListingScreenMode(0);}}
+            onClickAdd={onApplyFilters}
+            onSelectType={setLastFilteredType}
+        />}
+
+        <button
+            style={{
+                position: "absolute",
+                zIndex: "3",
+                top: "5vh",
+                right: "5vh"
+            }}
+            onClick={() => {setListingScreenMode(3);}}
+        >Add Filters</button>
+
         {/* Add listing button */}
         <HSControl
             onClick={handleAddListing}
@@ -103,7 +198,8 @@ export default function Map() {
 
         {/* Recenter map button */}
         <HSControl
-            onClick={testFunction2}
+            onClick={onRecenterMap
+    }
             content={<RecenterIcon/>}
             right="5%"
             borderRadius="50%"
@@ -112,12 +208,21 @@ export default function Map() {
 
         {/* Main map */}
         <GoogleMap
+            id="HSmap"
             mapContainerStyle={MAP_CONTAINER_STYLE}
             zoom={DEFAULT_ZOOM}
             center={DEFAULT_CENTER}
             options={DEFAULT_OPTIONS}
+            onLoad={onMapLoad}
         >
-            {markers.map(marker => <Marker key={marker.id} position={{lat: marker.lat, lng: marker.lng}}/>)}
+            {markers.map(marker => (filterType == "none" || filterType == marker.type) && <Marker 
+                key={marker.id} 
+                position={{lat: marker.lat, lng: marker.lng}}
+                onClick={() => {
+                    setSelected(marker);
+                    setListingScreenMode(2);
+                }}
+            />)}
         </GoogleMap>
     </div>
 }
